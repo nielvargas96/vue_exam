@@ -9,6 +9,7 @@ const password = ref('');
 const errorMsg = ref(false);
 const usernameError = ref('');
 const passwordError = ref('');
+const showPassword = ref(false);
 
 function validateForm() {
   usernameError.value = '';
@@ -35,7 +36,7 @@ function login() {
   } else {
     errorMsg.value = true;
   }
-}
+} 
 </script>
 
 <template>
@@ -49,7 +50,10 @@ function login() {
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" @input="passwordError = ''; errorMsg = false" />
+        <div class="flex">
+          <input :type="showPassword ? 'text' : 'password'" id="password" v-model="password" @input="passwordError = ''; errorMsg = false" />
+          <span @click="showPassword = !showPassword" class="show-pass">{{ showPassword ? 'hide' : 'show' }}</span>
+        </div>
         <p v-if="passwordError" class="err-msg">{{ passwordError }}</p>
       </div>
       <p v-if="errorMsg" class="err-msg">*Invalid credentials.</p>
