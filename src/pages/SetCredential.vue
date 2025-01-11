@@ -29,7 +29,6 @@ async function checkPwnedPassword(password) {
 
   try {
     const response = await axios.get(apiUrl);
-    const contentLength = response.headers['content-length'];
     const data = response.data;
 
     console.log(data)
@@ -40,12 +39,14 @@ async function checkPwnedPassword(password) {
 
     lines.forEach((line) => {
       const [suffix, count] = line.split(':');
-      if (hashedPassword.substring(5).toUpperCase() === suffix) {
-        totalOccurrences += parseInt(count, 10);
-      }
+      // if (hashedPassword.substring(5).toUpperCase() === suffix) {
+      //   totalOccurrences += parseInt(count, 10);
+      //   console.log(totalOccurrences, count)
+      // } 
+      totalOccurrences += parseInt(count, 10);
+      console.log('total score', totalOccurrences, 'count', count);
     });
 
-    // console.log(totalOccurrences, 'pwdscore')
 
     return totalOccurrences < 100000;
 
@@ -55,6 +56,7 @@ async function checkPwnedPassword(password) {
     return false;
   }
 }
+
 
 function validate() {
   let isValid = true;
@@ -121,6 +123,7 @@ async function saveCredentials() {
 <template>
   <div>
     <h1>Set Credentials</h1>
+
     <form @submit.prevent="saveCredentials">
       <div class="form-group">
         <label for="username">Username:</label>
