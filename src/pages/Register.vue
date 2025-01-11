@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue';
 import { otp_api } from '../api.ts'
 import { useRouter } from 'vue-router';

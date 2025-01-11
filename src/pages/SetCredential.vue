@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import CryptoJS from 'crypto-js';
+// import CryptoJS from 'crypto-js';
 import axios from 'axios';
-import {api_pwnedpasswords} from '../api'
+import { api_pwnedpasswords } from '../api'
 
 const router = useRouter();
 const username = ref('');
@@ -16,34 +16,36 @@ const errors = ref({
   userExist: ''
 });
 
-async function checkPwnedPassword(password: string): Promise<boolean> {
+async function checkPwnedPassword(password) {
 
   const hashedPassword = CryptoJS.SHA1(password).toString();
   const passwordPrefix = hashedPassword.substring(0, 5);
-  
+
   const apiUrl = `https://api.pwnedpasswords.com/range/${passwordPrefix}`
 
-  console.log(hashedPassword) 
+  console.log(hashedPassword)
+
   console.log(passwordPrefix)
 
   try {
     const response = await axios.get(apiUrl);
+    const contentLength = response.headers['content-length'];
     const data = response.data;
-
 
     console.log(data)
 
-
     const lines = data.split('\r');
-   
+
     let totalOccurrences = 0;
 
-    lines.forEach((line: string) => {
+    lines.forEach((line) => {
       const [suffix, count] = line.split(':');
       if (hashedPassword.substring(5).toUpperCase() === suffix) {
         totalOccurrences += parseInt(count, 10);
       }
     });
+
+    // console.log(totalOccurrences, 'pwdscore')
 
     return totalOccurrences < 100000;
 
@@ -54,7 +56,7 @@ async function checkPwnedPassword(password: string): Promise<boolean> {
   }
 }
 
-function validate(): boolean {
+function validate() {
   let isValid = true;
 
   if (!username.value) {
@@ -94,7 +96,7 @@ async function saveCredentials() {
   );
 
   if (storedUsernames.includes(username.value)) {
-    alert('*Username already exists.'); 
+    alert('*Username already exists.');
     return;
   }
 
@@ -105,8 +107,6 @@ async function saveCredentials() {
   }
 
   const hashedPassword = CryptoJS.SHA1(password.value).toString();
-
-  // Save to LocalStorage
   localStorage.setItem(
     'usernames',
     JSON.stringify([...storedUsernames, username.value])
